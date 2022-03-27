@@ -1,3 +1,5 @@
+
+
 # encoding=utf8
 from ast import parse
 # from ctypes import GetLastError
@@ -265,7 +267,7 @@ if __name__ == "__main__":
     else:
         print("Please Inpu Information:")
         user =  input('Input the Student ID:' )
-        password  =  getpass.getpass( 'Input the passwd:' )
+        password  =  getpass.getpass( 'Input the Password:' )
         autorepoter = Report(stuid=user,password=password)
 
     # 打卡一次,报备一次

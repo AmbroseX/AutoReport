@@ -26,6 +26,8 @@ pip install getpass
 
 ### Windows
 
+- 输入用户名密码运行
+
 CMD切换到当前目录下,运行
 
 ```cmd
@@ -38,6 +40,11 @@ python autoreport.py
 
 ![图标](./img/health.ico)
 
+- 带参数运行
+
+```cmd
+python autoreport.py --username [SA...] --password [密码]
+```
 
 ### Linux
 
@@ -47,7 +54,11 @@ python autoreport.py
 ```
 然后输入用户名密码即可
 
+- 带参数运行
 
+```shell
+python autoreport.py --username [SA...] --password [密码]
+```
 
 
 
