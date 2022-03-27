@@ -1,6 +1,16 @@
 # 南七技校自动健康打卡报备脚本
 
+![School](https://img.shields.io/badge/School-URC-blue.svg)
+![Language](https://img.shields.io/badge/language-Python3-yellow.svg)
+![GitHub stars](https://img.shields.io/github/stars/Rongkang/USTC-ncov-AutoReport)
 ![GitHub forks](https://img.shields.io/github/forks/Rongkang/AutoReport)
+
+
+## 说明
+
+**本打卡脚本仅供学习交流使用，请勿过分依赖。开发者对使用或不使用本脚本造成的问题不负任何责任，不对脚本执行效果做出任何担保，原则上不提供任何形式的技术支持。**
+
+
 
 ## 使用方法
 ### 运行环境
