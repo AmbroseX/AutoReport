@@ -87,6 +87,4 @@ python autoreport.py --username [SA...] --password [密码]
 - 点击确认上报，点击抓到的 daliy_report 请求，在 Payload 下面找到 Form Data 这就是每次上报提交的信息参数
 ![](https://cdn.jsdelivr.net/gh/RongkangXiong/pic-bed/blog/img/20220326175051.png)
 
-将找到的 Data 除 _token （每次都会改变，所以不需要复制，脚本中会每次获取新的 token 并添加到要提交的数据中）外都复制下来，存放在 data.json 中，并参考示例文件转换为对应的格式
-
 
