@@ -2,7 +2,7 @@
 
 ![School](https://img.shields.io/badge/School-URC-blue.svg)
 ![Language](https://img.shields.io/badge/language-Python3-yellow.svg)
-![GitHub stars](https://img.shields.io/github/stars/RongkangXiong/USTC-ncov-AutoReport)
+![GitHub stars](https://img.shields.io/github/stars/RongkangXiong/AutoReport)
 ![GitHub forks](https://img.shields.io/github/forks/RongkangXiong/AutoReport)
 
 
