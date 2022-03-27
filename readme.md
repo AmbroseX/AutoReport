@@ -15,6 +15,12 @@
 ## 使用方法
 ### 运行环境
 
+- 直接安装依赖
+
+```python
+pip install -r requirements.txt
+```
+
 - python
 - 安装包
 
