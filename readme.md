@@ -1,5 +1,7 @@
 # 南七技校自动健康打卡报备脚本
 
+![GitHub forks](https://img.shields.io/github/forks/Rongkang/AutoReport)
+
 ## 使用方法
 ### 运行环境
 
