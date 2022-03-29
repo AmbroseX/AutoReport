@@ -12,4 +12,4 @@ oShellLink.Description = "AutoReport" : '备注
 oShellLink.WorkingDirectory = targetfolder : '起始位置
 oShellLink.Save : '创建保存快捷方式
 
-Wscript.echo "HexoBlogTools桌面快捷方式创建成功"
+Wscript.echo "AutoReport desktop shortcut was created successfully!"
