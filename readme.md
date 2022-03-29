@@ -79,7 +79,9 @@ python autoreport.py
 python autoreport.py --username [SA...] --password [密码]
 ```
 
+## 无需输入账号密码
 
+请使用 `NopasswdAutoreport.py`,修改里面的用户名和密码,可以加入每日计划中,定时打卡
 
 
 ## data.json 数据获取方法
