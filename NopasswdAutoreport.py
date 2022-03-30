@@ -86,10 +86,14 @@ class Report(object):
         # print(text_danger_relation )
         text_danger_mobile = soup.find("input",{"name":"jiji_mobile"})["value"]
         # print(text_danger_mobile)
+        dorm_building = soup.find("input",{"name":"dorm_building"})["value"]
+        dorm = soup.find("input",{"name":"dorm"})["value"]
         
 
         data_report = {
             "juzhudi": "西校区",
+            "dorm_building": dorm_building,
+	        "dorm": dorm,
 	        "body_condition": "1",
 	        "body_condition_detail": "",
 	        "now_status": "1",
