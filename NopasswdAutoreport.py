@@ -263,10 +263,10 @@ if __name__ == "__main__":
     print(sys.argv[0])
     
     username = sys.argv[1]
-    print(username)
+    # print(username)
     
     password = sys.argv[2]
-    print(password)
+    # print(password)
 
     # username = ''
     # password = ''
