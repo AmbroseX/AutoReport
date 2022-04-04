@@ -4,6 +4,7 @@ sd
 """
 
 # encoding=utf8
+import sys
 from ast import parse
 # from ctypes import GetLastError
 # import os
@@ -272,7 +273,7 @@ if __name__ == "__main__":
         password = args.password
         autorepoter = Report(stuid=args.username,password=args.password)
     else:
-        print("Please Inpu Information:")
+        print("Please Input Information:")
         user =  input('Input the Student ID:' )
         password  =  getpass.getpass( 'Input the Password:' )
         autorepoter = Report(stuid=user,password=password)

@@ -4,6 +4,7 @@ sd
 """
 
 # encoding=utf8
+import sys
 from ast import parse
 # from ctypes import GetLastError
 # import os
@@ -259,8 +260,16 @@ print("|                             自动打卡报备脚本                   
 print("+------------------------------------------------------------------------+")
 
 if __name__ == "__main__":
-    username = ''
-    password = ''
+    print(sys.argv[0])
+    
+    username = sys.argv[1]
+    print(username)
+    
+    password = sys.argv[2]
+    print(password)
+
+    # username = ''
+    # password = ''
     autorepoter = Report(stuid=username,password=password)
     # 打卡一次,报备一次
     autorepoter.Clock()
