@@ -25,6 +25,7 @@ class Report(object):
         self.url_login = "https://passport.ustc.edu.cn/login?service=https%3A%2F%2Fweixine.ustc.edu.cn%2F2020%2Fcaslogin"
         self.url_report = "https://weixine.ustc.edu.cn/2020/home"
         self.url_apply = "https://weixine.ustc.edu.cn/2020/apply/daliy/post"
+        self.url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
         self.reason = 3
         # reason=1 离校前往合肥市包河、庐阳、蜀山、瑶海区以外
         # reason=2 前往合肥市包河、庐阳、蜀山、瑶海区范围内校外

@@ -180,7 +180,6 @@ class Report(object):
 
     def GetLastTime(self):
         session = self.login()
-        url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
         data = session.get(self.url_total).text
         data = data.encode('ascii','ignore').decode('utf-8','ignore')
         soup_total = BeautifulSoup(data, 'html.parser')
