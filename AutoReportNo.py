@@ -180,16 +180,24 @@ class Report(object):
 
     def GetLastTime(self):
         session = self.login()
-        data = session.get(self.url_report).text
-        soup = BeautifulSoup(data, 'html.parser')
-        pattern = re.compile("2022-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}")
-        # last_time_report = soup.find("span", {"上次上报时间"})
-        last_time_report = soup.find("span", {"style": "position: relative; top: 5px; color: #666;"}).text
+        url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
+        data = session.get(self.url_total).text
+        data = data.encode('ascii','ignore').decode('utf-8','ignore')
+        soup_total = BeautifulSoup(data, 'html.parser')
+
+        lasttime = soup_total.tbody.tr.td.next_element.next_element.next_element.next_element.next_element.next_element.next_element.next_element.next_element
+
+        # data = session.get(self.url_total).text
+        # soup = BeautifulSoup(data, 'html.parser')
         
-        lasttime = last_time_report.strip('*上次上报时间：').strip('，请每日按时打卡')
+        # pattern = re.compile("2022-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}")
+        # # last_time_report = soup.find("span", {"上次上报时间"})
+        # last_time_report = soup.find("span", {"style": "position: relative; top: 5px; color: #666;"}).text
+        # lasttime = last_time_report.strip('*上次上报时间：').strip('，请每日按时打卡')
+        
         self.LastTime = lasttime
         print("上次上报时间:",lasttime,'\n脚本每日按时打卡!\n')
-        return(lasttime )
+        return(lasttime)
 
 
     def login(self): 

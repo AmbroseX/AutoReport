@@ -24,7 +24,8 @@ class Report(object):
     def __init__(self,stuid,password):
         self.url_login = "https://passport.ustc.edu.cn/login?service=https%3A%2F%2Fweixine.ustc.edu.cn%2F2020%2Fcaslogin"
         self.url_report = "https://weixine.ustc.edu.cn/2020/home"
-        self.url_apply = "https://weixine.ustc.edu.cn/2020/apply/daliy/post"
+        self.url_apply = "https://weixine.ustc.edu.cn/2020/apply/daliy/ipost"
+        self.url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
         self.reason = 3
         # reason=1 离校前往合肥市包河、庐阳、蜀山、瑶海区以外
         # reason=2 前往合肥市包河、庐阳、蜀山、瑶海区范围内校外
@@ -179,16 +180,24 @@ class Report(object):
 
     def GetLastTime(self):
         session = self.login()
-        data = session.get(self.url_report).text
-        soup = BeautifulSoup(data, 'html.parser')
-        pattern = re.compile("2022-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}")
-        # last_time_report = soup.find("span", {"上次上报时间"})
-        last_time_report = soup.find("span", {"style": "position: relative; top: 5px; color: #666;"}).text
+        url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
+        data = session.get(self.url_total).text
+        data = data.encode('ascii','ignore').decode('utf-8','ignore')
+        soup_total = BeautifulSoup(data, 'html.parser')
+
+        lasttime = soup_total.tbody.tr.td.next_element.next_element.next_element.next_element.next_element.next_element.next_element.next_element.next_element
+
+        # data = session.get(self.url_total).text
+        # soup = BeautifulSoup(data, 'html.parser')
         
-        lasttime = last_time_report.strip('*上次上报时间：').strip('，请每日按时打卡')
+        # pattern = re.compile("2022-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}")
+        # # last_time_report = soup.find("span", {"上次上报时间"})
+        # last_time_report = soup.find("span", {"style": "position: relative; top: 5px; color: #666;"}).text
+        # lasttime = last_time_report.strip('*上次上报时间：').strip('，请每日按时打卡')
+        
         self.LastTime = lasttime
         print("上次上报时间:",lasttime,'\n脚本每日按时打卡!\n')
-        return(lasttime )
+        return(lasttime)
 
 
     def login(self): 
@@ -267,7 +276,7 @@ if __name__ == "__main__":
     parser.add_argument('-us','--username', help='Your Student ID', type=str, default="None")
     parser.add_argument('-p','--password', help='Your password', type=str, default="None")
     args = parser.parse_args()
-    if(len(args.username)!=0 & len(args.password) !=0):
+    if(len(args.username)!=0 or len(args.password) !=0):
         print("Begin login")
         user = args.username
         password = args.password
