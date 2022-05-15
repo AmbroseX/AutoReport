@@ -24,7 +24,7 @@ class Report(object):
     def __init__(self,stuid,password):
         self.url_login = "https://passport.ustc.edu.cn/login?service=https%3A%2F%2Fweixine.ustc.edu.cn%2F2020%2Fcaslogin"
         self.url_report = "https://weixine.ustc.edu.cn/2020/home"
-        self.url_apply = "https://weixine.ustc.edu.cn/2020/apply/daliy/post"
+        self.url_apply = "https://weixine.ustc.edu.cn/2020/apply/daliy/ipost"
         self.url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
         self.reason = 3
         # reason=1 离校前往合肥市包河、庐阳、蜀山、瑶海区以外
@@ -90,7 +90,6 @@ class Report(object):
         # print(text_danger_mobile)
         dorm_building = soup.find("input",{"name":"dorm_building"})["value"]
         dorm = soup.find("input",{"name":"dorm"})["value"]
-        
 
         data_report = {
             "juzhudi": "西校区",
@@ -181,7 +180,6 @@ class Report(object):
 
     def GetLastTime(self):
         session = self.login()
-        url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
         data = session.get(self.url_total).text
         data = data.encode('ascii','ignore').decode('utf-8','ignore')
         soup_total = BeautifulSoup(data, 'html.parser')
@@ -269,21 +267,26 @@ print("|                             自动打卡报备脚本                   
 print("+------------------------------------------------------------------------+")
 
 if __name__ == "__main__":
-    print(sys.argv[0])
-    
-    username = sys.argv[1]
-    # print(username)
-    
-    password = sys.argv[2]
-    # print(password)
+    everyhours = 5 # hours 每多少小时进行打卡
+    waittime = 10 # seconds 等待多长时间
 
-    # username = ''
-    # password = ''
-    autorepoter = Report(stuid=username,password=password)
+    parser = argparse.ArgumentParser()
+    parser.description = 'USTC Health Auto Report Script.'
+    parser.add_argument('-us','--username', help='Your Student ID', type=str, default="None")
+    parser.add_argument('-p','--password', help='Your password', type=str, default="None")
+    args = parser.parse_args()
+
+    print("Begin login")
+    user = args.username
+    password = args.password
+    autorepoter = Report(stuid=args.username,password=args.password)
+    
+
     # 打卡一次,报备一次
     autorepoter.Clock()
     autorepoter.Report()
 
     lastime = autorepoter.GetLastTime()
+
 
   
