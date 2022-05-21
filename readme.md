@@ -16,6 +16,16 @@
 
 在 `.\data`文件下放置行程码图片，命名为`journey.jpg`
 
+设置定时计划运行下面代码(可以改一下脚本路径，和python解释器路径)
+```python
+python AutoReportNo.py --username [SA...] --password [密码]
+```
+
+自动每隔一段时间运行，使用下面代码(可以改一下脚本路径，和python解释器路径)
+```python
+python AutoReport.py --username [SA...] --password [密码]
+```
+
 ### 运行环境
 
 - 直接安装依赖
