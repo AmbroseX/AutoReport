@@ -26,6 +26,9 @@ class Report(object):
         self.url_report = "https://weixine.ustc.edu.cn/2020/home"
         self.url_apply = "https://weixine.ustc.edu.cn/2020/apply/daliy/ipost"
         self.url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
+        self.url_upload = "https://weixine.ustc.edu.cn/2020/upload/xcm"
+        self.url_xcm = "https://weixine.ustc.edu.cn/2020/upload/xcm"
+        self.url_delete = 'https://weixine.ustc.edu.cn/2020/upload/1/delete'
         self.reason = 3
         # reason=1 离校前往合肥市包河、庐阳、蜀山、瑶海区以外
         # reason=2 前往合肥市包河、庐阳、蜀山、瑶海区范围内校外
@@ -40,8 +43,92 @@ class Report(object):
         self.PHPSESSID = ""
         self.loginsuccess = False
         self.LastTime = ""
+    
+    def upLoadJourney(self):
+        filename = "journey.jpg"
+        filetype = "jpeg"
         
-
+        session = self.login()
+        
+        # 获取delete token
+        headers_xcm = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'accept-encoding': 'gzip, deflate, br',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'cache-control': 'max-age=0',
+            'cookie': 'PHPSESSID=' + session.cookies.get("PHPSESSID") + ";XSRF-TOKEN=" + session.cookies.get("XSRF-TOKEN") + ";laravel_session="+session.cookies.get("laravel_session"),
+            'referer': 'https://weixine.ustc.edu.cn/2020/upload/xcm',
+            'sec-fetch-dest': 'empty',
+            "sec-fetch-mode": "cors",
+            'sec-fetch-site': 'same-origin',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Mobile Safari/537.36',
+        }
+        data_xcm = session.get(self.url_xcm,headers=headers_xcm).text
+        data_xcm = data_xcm.encode('ascii','ignore').decode('utf-8','ignore')
+        soup_xcm = BeautifulSoup(data_xcm, 'html.parser')
+        # print(soup_xcm)
+        xcm_token = soup_xcm.find('input',type="hidden")['value']
+        
+        print(xcm_token)
+        
+        headers_delete={
+            'authority': 'weixine.ustc.edu.cn',
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Mobile Safari/537.36',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'cookie': 'PHPSESSID=' + session.cookies.get("PHPSESSID") + ";XSRF-TOKEN=" + session.cookies.get("XSRF-TOKEN") + ";laravel_session="+session.cookies.get("laravel_session"),
+            'origin': 'http://weixine.ustc.edu.cn',
+            'referer': 'https://weixine.ustc.edu.cn/2020/upload/xcm',
+            'sec-fetch-dest': 'empty',
+            "sec-fetch-mode": "cors",
+            'sec-fetch-site': 'same-origin',
+            'sec-gpc': '1',
+            'x-csrf-token': xcm_token,
+            'x-requested-with': 'XMLHttpRequest',    
+        }
+        
+        data_delete = session.post(self.url_delete,headers=headers_delete)
+        print("delete successs!")
+        data_upload = {
+            "_token": self.token,
+            "gid": "2201704105",
+            "sign": "",
+            "t": "1",
+            "id": "WU_FILE_0",
+            "name": filename,
+            "type": "image/"+filetype,
+            "lastModifiedDate": "",
+            "size": "",
+            "file": "(binary)"
+        }
+        
+        Boundary = 'bpLUVR22qiNSnZ1N'
+        # print("session.cookies:",session.cookies)
+        headers_upload = {
+            'authority': 'weixine.ustc.edu.cn',
+            # ":path": "/2020img/api/upload_for_student",
+            # 'content-type': 'multipart/form-data; boundary=----WebKitFormBoundaryhVIDopDHMe3B4c3o',
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Mobile Safari/537.36',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary'+Boundary,
+            'cookie': 'PHPSESSID=' + session.cookies.get("PHPSESSID") + ";XSRF-TOKEN=" + session.cookies.get("XSRF-TOKEN") + ";laravel_session="+session.cookies.get("laravel_session"),
+            'origin': 'http://weixine.ustc.edu.cn',
+            'referer': 'https://weixine.ustc.edu.cn/2020/upload/xcm',
+            'sec-fetch-dest': 'empty',
+            "sec-fetch-mode": "cors",
+            'sec-fetch-site': 'same-origin',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1'
+        }
+        files = {'img':("journey.jpg",open("./data/journey.jpg","rb"),"image/jpeg",{})}
+        # data = session.request("POST",self.url_upload, data=data_upload, headers=headers_upload,files=files)
+        # print(data.text)
+        pass
+        
+        
     def Clock(self):
         session = self.login()
         headers_report = {
@@ -287,30 +374,35 @@ if __name__ == "__main__":
         autorepoter = Report(stuid=user,password=password)
 
     # 打卡一次,报备一次
-    autorepoter.Clock()
-    autorepoter.Report()
+    # print("Clock")
+    # autorepoter.Clock()
+    
+    print("upload")
+    autorepoter.upLoadJourney()
+    
+    # autorepoter.Report()
 
     lastime = autorepoter.GetLastTime()
 
 
-    while 1:
-        try:
-            timenow = datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S')
-            delta= datetime.datetime.strptime(timenow,'%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(lastime,'%Y-%m-%d %H:%M:%S')
-            # if delta.seconds>20:
-            if (delta.seconds//3600)>everyhours:
-                autorepoter.Clock()
-                autorepoter.Report()
-                lastime = autorepoter.GetLastTime()
-            else:
-                time_hour = delta.seconds//3600
-                time_min = (delta.seconds-time_hour*3600)//60
-                time_second = delta.seconds-time_hour*3600-time_min*60
-                print("User:",user,"当前时间:",timenow,"上次报备时间为:",time_hour,"hours",time_min,"min",time_second,"s 以前")
-                time.sleep(waittime)
-        except Exception:
-            print("\033[1;31;43mLogin Failed!\033[0m")
-        finally:
-            time.sleep(1)
+    # while 1:
+    #     try:
+    #         timenow = datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S')
+    #         delta= datetime.datetime.strptime(timenow,'%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(lastime,'%Y-%m-%d %H:%M:%S')
+    #         # if delta.seconds>20:
+    #         if (delta.seconds//3600)>everyhours:
+    #             autorepoter.Clock()
+    #             autorepoter.Report()
+    #             lastime = autorepoter.GetLastTime()
+    #         else:
+    #             time_hour = delta.seconds//3600
+    #             time_min = (delta.seconds-time_hour*3600)//60
+    #             time_second = delta.seconds-time_hour*3600-time_min*60
+    #             print("User:",user,"当前时间:",timenow,"上次报备时间为:",time_hour,"hours",time_min,"min",time_second,"s 以前")
+    #             time.sleep(waittime)
+    #     except Exception:
+    #         print("\033[1;31;43mLogin Failed!\033[0m")
+    #     finally:
+    #         time.sleep(1)
 
   
