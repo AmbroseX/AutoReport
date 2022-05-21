@@ -5,6 +5,7 @@ sd
 
 # encoding=utf8
 import sys
+import os
 from ast import parse
 # from ctypes import GetLastError
 # import os
@@ -18,7 +19,7 @@ import pytz
 import re
 from bs4 import BeautifulSoup
 import  getpass
-
+from requests_toolbelt import MultipartEncoder
 
 class Report(object):
     def __init__(self,stuid,password):
@@ -26,6 +27,10 @@ class Report(object):
         self.url_report = "https://weixine.ustc.edu.cn/2020/home"
         self.url_apply = "https://weixine.ustc.edu.cn/2020/apply/daliy/ipost"
         self.url_total = "https://weixine.ustc.edu.cn/2020/apply_total?t=d"
+        self.url_upload = "https://weixine.ustc.edu.cn/2020img/api/upload_for_student"
+        self.url_xcm = "https://weixine.ustc.edu.cn/2020/upload/xcm"
+        self.url_delete1 = 'https://weixine.ustc.edu.cn/2020/upload/1/delete'   # 删除行程卡
+        self.url_delete3 = 'https://weixine.ustc.edu.cn/2020/upload/3/delete'   # 删除核酸报告
         self.reason = 3
         # reason=1 离校前往合肥市包河、庐阳、蜀山、瑶海区以外
         # reason=2 前往合肥市包河、庐阳、蜀山、瑶海区范围内校外
@@ -40,8 +45,108 @@ class Report(object):
         self.PHPSESSID = ""
         self.loginsuccess = False
         self.LastTime = ""
+    
+    def upLoadJourney(self):
+        filename = "journey.jpg"
+        filetype = "jpeg"
         
+        session = self.login()
+        
+        # 获取delete token
+        headers_xcm = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'accept-encoding': 'gzip, deflate, br',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'cache-control': 'max-age=0',
+            'cookie': 'PHPSESSID=' + session.cookies.get("PHPSESSID") + ";XSRF-TOKEN=" + session.cookies.get("XSRF-TOKEN") + ";laravel_session="+session.cookies.get("laravel_session"),
+            'referer': 'https://weixine.ustc.edu.cn/2020/upload/xcm',
+            'sec-fetch-dest': 'empty',
+            "sec-fetch-mode": "cors",
+            'sec-fetch-site': 'same-origin',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Mobile Safari/537.36',
+        }
+        data_xcm = session.get(self.url_xcm,headers=headers_xcm).text
+        data_xcm = data_xcm.encode('ascii','ignore').decode('utf-8','ignore')
+        soup_xcm = BeautifulSoup(data_xcm, 'html.parser')
+        # print(soup_xcm)
+        xcm_token = soup_xcm.find('input',type="hidden")['value']
+        
+        print(xcm_token)
+        
+        headers_delete1={
+            'authority': 'weixine.ustc.edu.cn',
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Mobile Safari/537.36',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'cookie': 'PHPSESSID=' + session.cookies.get("PHPSESSID") + ";XSRF-TOKEN=" + session.cookies.get("XSRF-TOKEN") + ";laravel_session="+session.cookies.get("laravel_session"),
+            'origin': 'http://weixine.ustc.edu.cn',
+            'referer': 'https://weixine.ustc.edu.cn/2020/upload/xcm',
+            'sec-fetch-dest': 'empty',
+            "sec-fetch-mode": "cors",
+            'sec-fetch-site': 'same-origin',
+            'sec-gpc': '1',
+            'x-csrf-token': xcm_token,
+            'x-requested-with': 'XMLHttpRequest',    
+        }
+        
+        data_delete1 = session.post(self.url_delete1,headers=headers_delete1)
+        print("delete successs!")
 
+        Boundary = 'J2aGzfsg35YqeT7X'
+        # print("session.cookies:",session.cookies)
+        
+        
+        
+        headers_upload = {
+            'content-type': '',
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Mobile Safari/537.36',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'cookie': 'PHPSESSID=' + session.cookies.get("PHPSESSID") + ";XSRF-TOKEN=" + session.cookies.get("XSRF-TOKEN") + ";laravel_session="+session.cookies.get("laravel_session"),
+            'origin': 'http://weixine.ustc.edu.cn',
+            'referer': 'https://weixine.ustc.edu.cn/2020/upload/xcm',
+            'sec-fetch-dest': 'empty',
+            "sec-fetch-mode": "cors",
+            'sec-fetch-site': 'same-origin',
+            'sec-gpc': '1',
+            'x-csrf-token': xcm_token,
+        }
+        script_path = os.path.split(os.path.realpath(__file__))[0]
+        
+        file_name = os.path.join(script_path,'data','journey.jpg')
+        file = open(file_name,"rb")
+        file_stats = os.stat(file_name)
+        # print(file_stats)
+        current_date = datetime.datetime.now().strftime('%a %b %d %Y %X')+" GMT+0800 (中国标准时间)"
+        file_stats = os.stat(file_name)
+        
+        multipart_encoder = MultipartEncoder(
+            fields={
+                "type": "image/jpeg",
+                "_token": self.token,
+                "gid": "2201704105",
+                "sign": 'g+Dw7g0z3an1IgTzgoeEnGSRvK5srtsANLma',
+                "t": "1",
+                "id": "WU_FILE_0",
+                "name": filename,
+                "lastModifiedDate": current_date,
+                "size": str(file_stats.st_size),
+                # "file": "(binary)",
+                'file': ("journey.jpg",open(file_name,"rb"), "image/jpeg"),
+            },
+            boundary = '----WebKitFormBoundary'+Boundary,
+        )
+
+        headers_upload['content-type'] = multipart_encoder.content_type
+        
+        
+        data = session.post(self.url_upload,data=multipart_encoder, headers=headers_upload)
+        print(data.text)
+        pass
+        
+        
     def Clock(self):
         session = self.login()
         headers_report = {
@@ -266,6 +371,7 @@ print("+------------------------------------------------------------------------
 print("|                             自动打卡报备脚本                             |")
 print("+------------------------------------------------------------------------+")
 
+
 if __name__ == "__main__":
     everyhours = 5 # hours 每多少小时进行打卡
     waittime = 10 # seconds 等待多长时间
@@ -281,11 +387,13 @@ if __name__ == "__main__":
     password = args.password
     autorepoter = Report(stuid=args.username,password=args.password)
     
-
     # 打卡一次,报备一次
+    print("Clock")
     autorepoter.Clock()
+    print("upload")
+    autorepoter.upLoadJourney()
+    print("Report")
     autorepoter.Report()
-
     lastime = autorepoter.GetLastTime()
 
 

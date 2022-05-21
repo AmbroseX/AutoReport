@@ -114,16 +114,15 @@ class Report(object):
             'x-csrf-token': xcm_token,
         }
         
+        script_path = os.path.split(os.path.realpath(__file__))[0]
+        file_name = os.path.join(script_path,'data','journey.jpg')
+        
         file_name = "./data/journey.jpg"
         file = open(file_name,"rb")
         file_stats = os.stat(file_name)
         # print(file_stats)
         current_date = datetime.datetime.now().strftime('%a %b %d %Y %X')+" GMT+0800 (中国标准时间)"
         file_stats = os.stat(file_name)
-        
-        file_payload = {
-            
-        }
         
         multipart_encoder = MultipartEncoder(
             fields={
@@ -137,7 +136,7 @@ class Report(object):
                 "lastModifiedDate": current_date,
                 "size": str(file_stats.st_size),
                 # "file": "(binary)",
-                'file': ("journey.jpg",open("./data/journey.jpg","rb"), "image/jpeg"),
+                'file': ("journey.jpg",open(file_name,"rb"), "image/jpeg"),
             },
             boundary = '----WebKitFormBoundary'+Boundary,
         )
